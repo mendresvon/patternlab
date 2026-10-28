@@ -83,9 +83,9 @@ def without_docs(node):
 
 
 @pytest.mark.parametrize("name,module,names", [
-    ("01_model1_training.ipynb", model1, ["ModelConfig", "Detector", "multitask_loss", "decode"]),
-    ("01_model1_training.ipynb", data, ["SentenceDataset", "collate"]),
-    ("01_model1_training.ipynb", checkpoints, ["save_checkpoint"]),
+    ("details/model1_training_details.ipynb", model1, ["ModelConfig", "Detector", "multitask_loss", "decode"]),
+    ("details/model1_training_details.ipynb", data, ["SentenceDataset", "collate"]),
+    ("details/model1_training_details.ipynb", checkpoints, ["save_checkpoint"]),
     ("02_model2_finetuning.ipynb", model2, ["prompt", "answer", "example", "training_examples"]),
 ])
 def test_notebook_definitions_match_shared_runtime(name, module, names):
@@ -97,7 +97,7 @@ def test_notebook_definitions_match_shared_runtime(name, module, names):
 
 
 def test_all_notebooks_have_valid_python_and_no_outputs():
-    for path in ROOT.glob("*.ipynb"):
+    for path in ROOT.rglob("*.ipynb"):
         notebook = json.loads(path.read_text())
         assert notebook["nbformat"] == 4
         assert notebook["metadata"]["kernelspec"]["name"] == "python3"
@@ -113,7 +113,7 @@ def test_model1_training_updates_heads_but_freezes_encoder():
     model = detector()
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=1e-3)
     before = {name: weight.detach().clone() for name, weight in model.named_parameters()}
-    tree = notebook_definitions("01_model1_training.ipynb")
+    tree = notebook_definitions("details/model1_training_details.ipynb")
     epoch = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "run_epoch")
     scope = {"torch": torch, "model_inputs": checkpoints.model_inputs,
              "multitask_loss": model1.multitask_loss, "decode": model1.decode}
@@ -242,19 +242,31 @@ def test_model1_notebook_runs_in_order_with_test_encoder(tmp_path, monkeypatch):
                "has_error": True, "category": "past_tense_not_inflected", "span": [12, 18],
                "source": {"dataset": "efcamdat", "split": split}}
         path.write_text(json.dumps(row) + "\n")
-    notebook = json.loads((ROOT / "01_model1_training.ipynb").read_text())
-    scope = {"__name__": "__main__"}
-    for cell in notebook["cells"]:
-        if cell["cell_type"] != "code":
-            continue
-        exec(compile("".join(cell["source"]), "model1 notebook", "exec"), scope)
-        if "TRAIN_FILE" in scope and "train_records" not in scope:
-            scope.update(TRAIN_FILE=train_file, VALIDATION_FILE=validation_file,
-                         OUTPUT=tmp_path / "trained", EPOCHS=1, BATCH_SIZE=1)
-    assert (tmp_path / "trained" / "best.pt").is_file()
-    assert (tmp_path / "trained" / "tokenizer").is_dir()
-    history = json.loads((tmp_path / "trained" / "history.json").read_text())
-    assert len(history) == 1 and history[0]["validation"]["examples"] == 1
+    runs = []
+    for name, folder in [("01_model1_training.ipynb", "short"),
+                         ("details/model1_training_details.ipynb", "full")]:
+        notebook = json.loads((ROOT / name).read_text())
+        output = tmp_path / folder
+        scope = {"__name__": "__main__"}
+        for cell in notebook["cells"]:
+            if cell["cell_type"] != "code":
+                continue
+            exec(compile("".join(cell["source"]), name, "exec"), scope)
+            if "TRAIN_FILE" in scope and "train_records" not in scope:
+                scope.update(TRAIN_FILE=train_file, VALIDATION_FILE=validation_file,
+                             OUTPUT=output, EPOCHS=2, BATCH_SIZE=1)
+        assert (output / "best.pt").is_file() and (output / "tokenizer").is_dir()
+        history = json.loads((output / "history.json").read_text())
+        assert len(history) == 2 and history[0]["validation"]["examples"] == 1
+        runs.append((history, torch.load(output / "best.pt", weights_only=True)))
+    short_history, short_checkpoint = runs[0]
+    full_history, full_checkpoint = runs[1]
+    assert short_checkpoint["epoch"] == full_checkpoint["epoch"]
+    for short_row, full_row in zip(short_history, full_history):
+        assert short_row["train"]["loss"] == full_row["train"]["loss"]
+        assert short_row["validation"] == full_row["validation"]
+    for name, weight in short_checkpoint["head_state"].items():
+        assert torch.equal(weight, full_checkpoint["head_state"][name])
 
 
 def test_model2_notebook_data_and_save_flow_with_mock_trainer(tmp_path, monkeypatch):
@@ -300,3 +312,18 @@ def test_model2_notebook_data_and_save_flow_with_mock_trainer(tmp_path, monkeypa
     assert run["prompt_sha256"] == hashlib.sha256(model2.PROMPT.encode()).hexdigest()
     assert calls["args"]["completion_only_loss"] is True
     assert calls["peft_config"]["target_modules"] == model2.LORA_TARGETS
+
+
+def test_short_notebook_loader_rejects_train_validation_overlap(tmp_path):
+    from models.training import training_loaders
+
+    paths = []
+    for split in ["train", "validation"]:
+        row = {"record_schema_version": 1, "record_id": str(uuid.uuid4()),
+               "text": "The lantern shines.", "has_error": False, "category": None, "span": None,
+               "source": {"dataset": "efcamdat", "split": split}}
+        path = tmp_path / (split + ".jsonl")
+        path.write_text(json.dumps(row) + "\n")
+        paths.append(path)
+    with pytest.raises(ValueError, match="overlapping"):
+        training_loaders(*paths, TinyTokenizer(), batch_size=1, max_length=256, seed=42)

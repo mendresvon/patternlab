@@ -14,7 +14,8 @@ files are not included.
 
 | File | What to explain |
 | --- | --- |
-| `01_model1_training.ipynb` | Load prepared records, align labels, define the detector, train, validate, and save |
+| `01_model1_training.ipynb` | Short walkthrough with the training loop visible |
+| `details/model1_training_details.ipynb` | Optional token alignment, network, loss, and metric details |
 | `02_model2_finetuning.ipynb` | Build prompts, configure QLoRA, fine-tune Gemma, and save the adapter |
 | `03_running_the_models.ipynb` | Load both models, inspect the diagnosis, generate an edit, and validate it |
 | `models/` | Shared network definitions, input checks, checkpoint loading, and inference |
@@ -22,6 +23,9 @@ files are not included.
 | `tests/` | Software checks with invented examples |
 | `examples/` | Invented examples that show the data fields |
 
+Start with the short Model 1 notebook. It shows the training loop and moves setup details into supporting files.
+The optional detailed notebook retains the full implementation. The model and checkpoint selection stay the same.
+The short notebook reports training loss only. Validation still includes the original metrics.
 The training steps are visible in the notebooks. The website uses the small shared Python modules.
 Tests check that repeated notebook definitions match those modules. Open Jupyter from this folder and
 run each notebook from top to bottom. Each training notebook needs prepared private data before it can run.
