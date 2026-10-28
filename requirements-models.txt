@@ -1,0 +1,8 @@
+# Keep the provider's matching CUDA and PyTorch build when needed.
+torch>=2.6,<3
+transformers==5.18.0
+peft==0.21.2
+trl==1.16.0
+datasets==5.1.0
+accelerate==1.15.0
+bitsandbytes==0.50.2; platform_system == "Linux"

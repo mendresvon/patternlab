@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}首頁{% endblock %}
+{% block body_class %}world-home{% endblock %}
+{% block main_class %}home-main{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-inner">
+    <h1 id="hero-title">用中文想英文？<br><span class="ink-accent">一起找出文法盲點。</span></h1>
+    <p class="hero-description">有些英文錯誤，可能和中文的表達習慣有關。<br class="desktop-break">讓 PatternLab 幫你找出問題、看懂原因，再透過練習改善。</p>
+    <div class="actions">
+      <a class="button button-primary" href="/writing">{{ icon('pen') }} 開始寫作診斷 {{ icon('arrow') }}</a>
+      <a class="button button-secondary" href="/practice">{{ icon('book') }} 開始文法練習 {{ icon('arrow') }}</a>
+    </div>
+    <section class="hero-example" aria-labelledby="example-title">
+      <div class="example-heading"><h2 id="example-title">一個小改變，英文更自然。</h2><span class="example-tag">教學例句</span></div>
+      <div class="example-line example-before"><span class="sentence-label">修改前</span><p lang="en">I <del>very</del> enjoy this class.</p></div>
+      <div class="example-line example-after"><span class="sentence-label">修改後</span><p lang="en">I <mark>really</mark> enjoy this class.</p>{{ icon('check') }}</div>
+      <p class="example-rule">{{ icon('spark') }} <span><strong>修飾動詞，用 really。</strong>really 可以修飾 enjoy；very 不行。</span></p>
+    </section>
+  </div>
+</section>
+
+<div class="home-details container">
+<section class="learning-path" aria-labelledby="path-title">
+  <div class="section-heading"><div><p class="eyebrow">ONE PATTERN AT A TIME</p><h2 id="path-title">看懂原因，才能真的學會。</h2></div><a class="inline-link" href="/practice">探索七個主題 {{ icon('arrow') }}</a></div>
+  <div class="path-grid">
+    <article><span class="step-number">01</span><div><h3>看懂一個觀念</h3><p>用簡短的中文解說，理解英文的句型規律。</p></div></article>
+    <article><span class="step-number">02</span><div><h3>留意一個小差別</h3><p>比較修改前後的例句，發現關鍵在哪裡。</p></div></article>
+    <article><span class="step-number">03</span><div><h3>帶回自己的表達</h3><p>下次寫英文時，試著用上今天的新發現。</p></div></article>
+  </div>
+</section>
+
+<section class="progress-section" aria-labelledby="progress-title">
+  <div class="section-heading compact">
+    <div><p class="eyebrow">YOUR LEARNING JOURNEY</p><h2 id="progress-title">每一步，都算進步。</h2></div>
+    <button class="text-button reset-progress" type="button" hidden>重設進度</button>
+  </div>
+  <div class="stats-grid" aria-label="學習統計">
+    <article class="stat-card"><span class="stat-icon mint">{{ icon('check') }}</span><div><p>完成練習</p><strong data-stat="sessions">0</strong><span class="stat-unit"> 次</span></div><span class="stat-caption">每次完成，累積一點信心</span></article>
+    <article class="stat-card"><span class="stat-icon peach">{{ icon('target') }}</span><div><p>首次作答正確率</p><strong data-stat="accuracy">-</strong></div><span class="stat-caption" data-accuracy-caption>完成第一次練習後顯示</span></article>
+    <article class="stat-card"><span class="stat-icon lilac">{{ icon('spark') }}</span><div><p>累積經驗值</p><strong data-stat="xp">0</strong><span class="stat-unit"> XP</span></div><span class="stat-caption">每答對一題，獲得 10 XP</span></article>
+  </div>
+  <p class="storage-note" data-storage-note hidden></p>
+  <noscript><p class="storage-note">開啟 JavaScript 後，即可查看這個瀏覽器儲存的進度。</p></noscript>
+</section>
+
+<section class="next-step" aria-labelledby="next-title">
+  <div class="next-art" aria-hidden="true"><span>a</span><span>an</span></div>
+  <div class="next-copy"><p class="eyebrow" data-continue-eyebrow>A GOOD PLACE TO START</p><h2 id="next-title" data-continue-title>從 a 和 an 開始，找到語感。</h2><p data-continue-description>小小的冠詞，讓句子更完整。先認識一個簡單又常用的觀念。</p></div>
+  <a class="button button-secondary" data-continue-link href="/practice/article_omission">開始練習 {{ icon('arrow') }}</a>
+</section>
+
+<p class="preview-note">七大主題課程與五題練習已開放，進度只儲存在這個瀏覽器。{% if mode == 'sample' %}寫作診斷目前僅提供清楚標示的預寫示範結果。{% elif model_ready %}即時寫作診斷已連接，只顯示通過檢查的修正。{% elif model_loading %}即時模型正在載入，約需數分鐘。{% else %}寫作診斷介面已開放，即時模型尚未連接。{% endif %}</p>
+</div>
+{% endblock %}
+{% block extra %}
+<dialog id="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
+  <form method="dialog"><span class="stat-icon peach">{{ icon('book') }}</span><h2 id="reset-title">重新開始學習紀錄？</h2><p id="reset-description">將清除這個瀏覽器中的練習紀錄與 XP，無法復原。</p><div class="actions"><button class="button button-secondary" value="cancel" autofocus>保留進度</button><button class="button button-danger" value="reset">確認重設</button></div></form>
+</dialog>
+{% endblock %}

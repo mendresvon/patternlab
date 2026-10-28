@@ -1,0 +1,17 @@
+[
+  {
+    "text": "Yesterday I polish the lantern.",
+    "has_error": true,
+    "category": "past_tense_not_inflected",
+    "span": [
+      12,
+      18
+    ]
+  },
+  {
+    "text": "The lantern shines beside the gate.",
+    "has_error": false,
+    "category": null,
+    "span": null
+  }
+]

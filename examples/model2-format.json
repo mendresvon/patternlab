@@ -1,0 +1,19 @@
+{
+  "text": "Yesterday I polish the lantern.",
+  "category": "past_tense_not_inflected",
+  "span": [
+    12,
+    18
+  ],
+  "generation": {
+    "explanation_en": "Yesterday places the action in the past. Use polished.",
+    "explanation_zh": "Yesterday 表示過去。動詞 polish 要改成過去式 polished。",
+    "edit": {
+      "span": [
+        12,
+        18
+      ],
+      "replacement": "polished"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}文法練習{% endblock %}
+{% block body_class %}world-catalogue{% endblock %}
+{% block content %}
+<section class="page-intro catalogue-intro">
+  <div><p class="eyebrow">THE PRACTICE COLLECTION</p><h1>一次一個觀念，<span class="ink-accent">慢慢變熟練。</span></h1><p>從你想了解的主題開始。七個常見文法觀念，陪你找到英文的規律。</p></div>
+  <span class="collection-count"><strong>07</strong><span>個學習主題</span></span>
+</section>
+<section class="category-grid" aria-label="文法主題">
+  {% for id, category in categories.items() %}
+  <a class="category-card {{ category.tone }} {% if loop.last %}featured{% endif %}" href="/practice/{{ id }}" data-category="{{ id }}" aria-labelledby="title-{{ id }}">
+    <div class="card-content"><div class="card-top"><span class="category-symbol" aria-hidden="true">{{ category.symbol }}</span><span class="card-index">{{ '%02d'|format(loop.index) }}</span></div>
+      <p class="category-english" lang="en">{{ category.english }}</p><h2 id="title-{{ id }}">{{ category.name }}</h2><p class="category-description">{{ category.description }}</p>
+      <div class="card-bottom"><span data-category-progress="{{ id }}">開始練習</span><span class="round-arrow">{{ icon('arrow') }}</span></div>
+    </div>
+    {% if loop.last %}<div class="featured-example" aria-hidden="true"><span>一個小差別</span><p lang="en">I <del>very</del> enjoy<br>this class.</p><p lang="en">I <mark>really</mark> enjoy<br>this class.</p></div>{% endif %}
+  </a>
+  {% endfor %}
+</section>
+<aside class="catalogue-note"><span class="stat-icon mint">{{ icon('book') }}</span><div><h2>不用急，選一個感興趣的就好。</h2><p>先看觀念，再做五題練習。七個主題都能直接開始，無需使用 AI 診斷。</p></div><span class="note-decoration" aria-hidden="true">one step at a time.</span></aside>
+{% endblock %}

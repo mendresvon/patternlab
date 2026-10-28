@@ -1,0 +1,44 @@
+{% from 'icons.html' import icon %}
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="用中文想英文？一起找出文法盲點。PatternLab 透過中文解說與練習，幫你看懂中英表達的差異。">
+  <meta name="theme-color" content="#f6faf2">
+  <title>{% block title %}PatternLab{% endblock %} · 英文學習空間</title>
+  <link rel="icon" href="{{ url_for('static', path='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}?v=12">
+  <script id="category-metadata" type="application/json">{{ categories | tojson }}</script>
+  <script src="{{ url_for('static', path='app.js') }}?v=6" defer></script>
+</head>
+<body class="{% block body_class %}world-quiet{% endblock %}">
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header">
+    <div class="nav-shell container">
+      <a class="brand" href="/" aria-label="PatternLab 首頁">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        Pattern<span class="brand-light">Lab</span><span class="brand-dot">.</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="開啟導覽選單" hidden>{{ icon('menu') }}</button>
+      <nav id="main-nav" aria-label="主要導覽">
+        <a href="/" {% if active == 'home' %}aria-current="page"{% endif %}>首頁 <span lang="en">Home</span></a>
+        <a href="/writing" {% if active == 'writing' %}aria-current="page"{% endif %}>寫作診斷 <span lang="en">Writing Lab</span></a>
+        <a href="/practice" {% if active == 'practice' %}aria-current="page"{% endif %}>文法練習 <span lang="en">Practice</span></a>
+      </nav>
+    </div>
+  </header>
+  {% if mode == 'sample' %}<aside class="sample-banner" role="note"><div class="container"><strong>示範模式</strong><span>顯示預先編寫的範例，非即時模型推論。</span></div></aside>{% endif %}
+  {% if reviewer %}<aside class="reviewer-banner" role="note"><div class="container"><strong>審閱模式</strong><span>英文說明僅供審閱，不用於學習者操作。</span></div></aside>{% endif %}
+  <main id="main" class="{% block main_class %}container{% endblock %}" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer container">
+    <div><a class="footer-brand" href="/">PatternLab<span>.</span></a><span class="footer-tagline">小小的練習，更自然的英文。</span></div>
+    <p>{{ icon('shield') }} 進度只儲存在這個瀏覽器</p>
+    <span class="edition">PatternLab · 學習從一個觀念開始</span>
+  </footer>
+  <div class="toast" role="status" aria-live="polite" hidden></div>
+  {% block extra %}{% endblock %}
+</body>
+</html>

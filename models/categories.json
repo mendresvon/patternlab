@@ -1,0 +1,44 @@
+{
+  "article_omission": {
+    "name": "missing a/an",
+    "rule": "A singular countable noun needs a word such as a/an, the, my or this before it; when it has none, add an article. Use \"a\" before a consonant sound and \"an\" before a vowel sound: \"She is a teacher.\", \"It is an old car.\"",
+    "mandarin": "Mandarin has no articles: 她是老師 has no word for \"a\".",
+    "lesson": "Point to the singular noun that needs the article, and say whether it is \"a\" or \"an\"; give the sound reason only for \"an\"."
+  },
+  "plural_marking_omission": {
+    "name": "missing plural -s",
+    "rule": "After a number above one or a quantifier such as many, several, both, these or one of, a countable noun takes its plural form, usually -s or -es: \"two books\", \"many students\", \"one of my friends\".",
+    "mandarin": "A Mandarin noun does not change after a number: 兩本書 uses the same 書 as 一本書.",
+    "lesson": "Point to the number or quantifier that makes the noun plural; name the plural form only when it is irregular."
+  },
+  "past_tense_not_inflected": {
+    "name": "verb not in the past tense",
+    "rule": "When the sentence shows past time, through a time word (yesterday, last week, ago, in 2019, when I was young) or another verb in the past (\"I woke up and ate breakfast.\"), the verb takes its past form: \"Yesterday I went to the park.\" Regular verbs add -ed; irregular verbs have their own form.",
+    "mandarin": "Mandarin verbs never change for time: in 昨天我去公園, 去 stays the same, and the time word 昨天 shows that it is in the past.",
+    "lesson": "Point to what in the sentence shows the past (a time word or another past verb; use only what the sentence contains); name the past form only when it is irregular."
+  },
+  "subject_verb_agreement": {
+    "name": "verb does not match its subject",
+    "rule": "In the present tense the verb must match its subject: he, she, it or one person or thing takes the -s form (\"she likes\", \"he has\"); I, you, we, they and plural subjects take the base form (\"they like\", \"we have\"). The verb be has its own forms: I am, he/she/it is, we/you/they are.",
+    "mandarin": "Mandarin verbs never change with the subject: 他喜歡 and 他們喜歡 use the same 喜歡.",
+    "lesson": "Point to the subject and say whether it is one or more than one; name the verb form only for be, have or do."
+  },
+  "be_verb_omission": {
+    "name": "missing form of be (am/is/are/was/were)",
+    "rule": "An English sentence needs a verb. Before an adjective, a noun phrase or a place, use a form of be (\"She is happy.\", \"Yesterday I was tired.\", \"My office is near the station.\"), and the -ing form needs be as a helper (\"I am going home.\"). Use was or were when the sentence is about the past.",
+    "mandarin": "In Mandarin an adjective can follow the subject directly, often with 很 (她很高興 has no 是), and 我在回家 has no word for \"am\".",
+    "lesson": "Say that the word after the gap (an adjective, noun, place or -ing verb) needs a form of be, and give the form. Give no second reason."
+  },
+  "to_omission": {
+    "name": "missing to",
+    "rule": "Verbs and words such as want, need, hope, plan, happy and able take \"to\" before the next verb (\"I want to go.\"), and verbs of movement, communication, listening or belonging such as go, come, talk, reply, listen and belong take \"to\" before a place, person or thing (\"go to school\", \"talk to him\", \"listen to music\", \"It belongs to me.\").",
+    "mandarin": "Mandarin often needs no separate word in these places: 想去 and 去學校 join the words directly, and 聽音樂 has no word for \"to\".",
+    "lesson": "Point to the word before the gap that needs \"to\"."
+  },
+  "degree_adverb_misuse": {
+    "name": "very before a verb",
+    "rule": "Very, super and extremely cannot modify a verb. Before a verb such as like, love, enjoy or want, use \"really\": \"I really like it.\"",
+    "mandarin": "Mandarin puts a degree word straight before the verb: 很喜歡, 超喜歡.",
+    "lesson": "Say simply that \"very\" (or super, extremely) cannot modify a verb, so use \"really\" here. Do not say what \"very\" can modify (adjectives, adverbs), in either language."
+  }
+}

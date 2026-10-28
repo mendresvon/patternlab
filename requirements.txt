@@ -1,0 +1,6 @@
+# Website dependencies. Sample mode does not need PyTorch or model files.
+fastapi==0.161.1
+pydantic==2.14.1
+jinja2==3.1.6
+uvicorn==0.54.0
+httpx==0.28.1

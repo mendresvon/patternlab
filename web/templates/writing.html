@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}寫作診斷{% endblock %}
+{% block body_class %}world-writing{% endblock %}
+{% block content %}
+<div id="writing-lab" data-mode="{{ mode }}" data-max-length="{{ max_text_length }}" data-model-ready="{{ 'true' if model_ready else 'false' }}" data-model-loading="{{ 'true' if model_loading else 'false' }}" data-reviewer="{{ 'true' if reviewer else 'false' }}">
+  <section class="page-intro writing-intro"><p class="eyebrow">THE WRITING LAB</p><h1>從一句英文，<span class="ink-accent">發現學習的起點。</span></h1><p>看懂一個小差別，再把新觀念帶進下一句英文。</p></section>
+  <div class="writing-layout">
+    <form id="writing-form" class="writing-card" novalidate>
+      <div class="writing-card-heading"><span class="stat-icon mint">{{ icon('pen') }}</span><div><label for="sentence-input">寫下你想練習的一句英文</label><p id="writing-hint">一次一句，不用追求完美。</p></div></div>
+      <textarea id="sentence-input" name="text" rows="5" placeholder="例如：I very enjoy quiet mornings." aria-describedby="writing-hint writing-count writing-scope" required spellcheck="false" lang="en"></textarea>
+      <div class="writing-input-meta"><p id="writing-count">0 / {{ max_text_length }} 字</p><span>{{ icon('shield') }} 不儲存你寫的句子</span></div>
+      <p id="input-error" class="form-error" role="alert" hidden></p>
+      <div class="writing-submit-row"><p id="service-indicator" class="service-indicator{% if model_ready %} is-ready{% endif %}" role="status"><span aria-hidden="true"></span><span id="service-indicator-text">{% if mode == 'sample' %}目前為範例示範{% elif model_ready %}即時診斷已就緒{% elif model_loading %}模型載入中，約需數分鐘{% else %}即時診斷尚未連接{% endif %}</span></p><button id="analyze-sentence" class="button button-primary" type="submit" hidden>{{ icon('spark') }} 分析句子 {{ icon('arrow') }}</button></div>
+      <noscript><p class="storage-note">請開啟 JavaScript 以使用互動診斷。你仍可前往文法練習閱讀課程。</p></noscript>
+    </form>
+    <aside class="writing-guide" aria-labelledby="guide-title">
+      {% if mode == 'sample' %}
+      <p class="lesson-kicker">TRY A SMALL EXAMPLE</p><h2 id="guide-title">先選一句，看看會發現什麼。</h2><p>選取範例後，按「分析句子」。只有這些原句會回傳預先編寫的結果。</p>
+      <div class="sample-options">{% for sample in samples[:3] %}<button class="sample-option" type="button" data-sample-text="{{ sample.text }}">{{ sample.label }} {{ icon('arrow') }}</button>{% endfor %}</div>
+      <details class="more-samples"><summary>更多示範情境</summary><div class="sample-options">{% for sample in samples[3:] %}<button class="sample-option" type="button" data-sample-text="{{ sample.text }}">{{ sample.label }} {{ icon('arrow') }}</button>{% endfor %}</div></details>
+      {% else %}
+      <p class="lesson-kicker">ONE SENTENCE AT A TIME</p><h2 id="guide-title">留一點空間，給新的發現。</h2><ol><li>寫一句簡短的英文。</li><li>留意一個支援類別的錯誤。</li><li>到對應主題，把觀念練熟。</li></ol><p id="live-availability" class="live-availability">{% if model_ready %}即時模型已連接，支援七大類別。只顯示通過檢查的修正；沒有偵測到目標錯誤，也不代表句子完全正確。{% elif model_loading %}即時模型正在載入，約需數分鐘。載入完成後，本頁會自動更新。{% else %}目前尚未連接診斷服務。送出時會如實顯示無法分析，不會產生範例修正。{% endif %}</p>
+      {% endif %}
+      <div class="sentence-bank">
+        <h3>還沒有靈感？先挑一句。</h3>
+        {% if sentence_bank %}
+        <label for="bank-sentence">示範句庫 · {{ bank_count }} 句</label>
+        <select id="bank-sentence" aria-describedby="bank-note"><option value="">選一句英文試試看</option>{% for category_id, sentences in sentence_bank.items() %}<optgroup label="{{ categories[category_id].name if category_id != 'clean' else '沒有目標錯誤的例句' }}">{% for sentence in sentences %}<option value="{{ sentence }}">{{ sentence }}</option>{% endfor %}</optgroup>{% endfor %}</select>
+        <p id="bank-note">選取後會填入原句，再按「分析句子」。這份句庫只供展示，不列入研究分數。{% if mode == 'sample' %}目前為示範模式，只有上方的預寫範例會回傳結果。{% endif %}</p>
+        {% else %}<p id="bank-note">示範句庫尚未載入，仍可自行輸入英文。</p>{% endif %}
+      </div>
+    </aside>
+  </div>
+  <div id="writing-scope" class="writing-scope">{{ icon('book') }}<div><p>每次只聚焦一句英文中的一個支援類別目標錯誤，不代表完整文法檢查。最多 {{ max_text_length }} 個字元，另受模型長度限制，超出時不會截斷。</p><p>符合某類錯誤，不代表中文造成了你的錯誤。<span lang="en">checks one target error per sentence</span></p></div></div>
+
+  <section id="analysis-loading" class="analysis-loading writing-card" role="status" aria-live="polite" hidden><div><span class="analysis-spinner" aria-hidden="true"></span><p>正在讀取診斷結果…</p></div><span class="skeleton-line"></span><span class="skeleton-line short"></span></section>
+
+  <section id="diagnosis-result" class="diagnosis-result" aria-labelledby="diagnosis-title" hidden>
+    <div class="diagnosis-heading"><span id="result-symbol" class="stat-icon mint" aria-hidden="true">{{ icon('spark') }}</span><div><p class="lesson-kicker" id="result-kicker">A SMALL DISCOVERY</p><h2 id="diagnosis-title" tabindex="-1"></h2></div><span id="result-sample-label" class="example-tag" {% if mode != 'sample' %}hidden{% endif %}>預寫範例</span></div>
+    <p id="diagnosis-message" class="diagnosis-message"></p>
+    <div id="diagnosis-success" hidden>
+      <div class="diagnosis-sentences"><div class="diagnosis-sentence original"><div><span>原句</span><span id="insertion-label" class="example-tag" hidden>標記處需要補字</span></div><p id="original-sentence" lang="en"></p></div><div class="diagnosis-sentence corrected"><span>修正後</span><p id="corrected-sentence" lang="en"></p></div></div>
+      <div class="explanation-pair{% if reviewer %} is-reviewer{% endif %}"><div class="diagnosis-explanation"><p class="category-label"><strong id="diagnosis-category"></strong><span id="diagnosis-category-en" lang="en"></span></p><h3>為什麼這樣改？</h3><p id="diagnosis-explanation"></p></div>
+      {% if reviewer %}<div id="reviewer-explanation" class="reviewer-explanation"><h3>英文說明 · 僅供審閱</h3><p id="diagnosis-explanation-en" lang="en"></p></div>{% endif %}
+      </div>
+      <div class="diagnosis-actions"><a id="targeted-practice" class="button button-primary" href="/practice">練習這類錯誤 {{ icon('arrow') }}</a><button id="copy-correction" class="button button-secondary" type="button">複製修正</button></div><p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
+    </div>
+    <div id="diagnosis-alternatives" class="diagnosis-actions" hidden><button id="retry-analysis" class="button button-primary" type="button" hidden>再試分析 {{ icon('arrow') }}</button><a class="button button-secondary" href="/practice">選一個主題練習 {{ icon('arrow') }}</a></div>
+    <button id="try-another" class="text-button" type="button">再試一句</button>
+  </section>
+</div>
+{% endblock %}
+{% block extra %}<script src="{{ url_for('static', path='writing.js') }}?v=11" defer></script>{% endblock %}

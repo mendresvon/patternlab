@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<div class="detail-shell">
+  <a class="back-link" href="/practice">{{ icon('arrow') }} 返回所有主題</a>
+  <div id="lesson">
+  <section class="topic-header"><span class="category-symbol {{ category.tone }}" aria-hidden="true">{{ category.symbol }}</span><p class="eyebrow">{{ category.english }}</p><h1>{{ category.name }}</h1><p>{{ category.description }}</p></section>
+  <section class="lesson-rule" aria-labelledby="rule-title"><span class="lesson-kicker">THE PATTERN</span><h2 id="rule-title">先抓住這個觀念</h2><p>{{ lesson.rule }}</p></section>
+  <section class="lesson-examples" aria-labelledby="example-title">
+    <div class="section-heading"><h2 id="example-title">看見句子裡的小差別</h2><span class="example-tag">教學例句</span></div>
+    {% for example in lesson.examples %}
+    <article class="example-panel"><div class="sentence-row"><span>修改前</span><p lang="en">{{ example.before }}</p></div><div class="sentence-row corrected"><span>修改後</span><p lang="en">{{ example.after }}</p>{{ icon('check') }}</div><p class="example-explanation">{{ icon('spark') }} {{ example.note }}</p></article>
+    {% endfor %}
+  </section>
+  <aside class="transfer-note"><h2>換個語言，也換個想法。</h2><p>{{ lesson.contrast }}</p></aside>
+  <section class="practice-launch" aria-labelledby="launch-title"><div><p class="lesson-kicker">YOUR NEXT SMALL WIN</p><h2 id="launch-title">用五題，把觀念練熟。</h2><p>3 題選擇 · 2 題填空 · 每答對一題 +10 XP</p></div><button id="start-practice" class="button button-primary" type="button" hidden>開始練習 {{ icon('arrow') }}</button><noscript><p>請開啟 JavaScript 以進行互動練習。課程內容仍可直接閱讀。</p></noscript></section>
+  </div>
+  <section id="practice-session" data-category="{{ category_id }}" data-category-name="{{ category.name }}" hidden aria-labelledby="quiz-title">
+    <div class="quiz-topline"><span class="lesson-kicker">PRACTICE ROUND</span><button id="back-to-lesson" class="text-button" type="button">返回課程</button></div>
+    <h1 id="quiz-title" tabindex="-1">{{ category.name }}</h1>
+    <p class="quiz-subtitle">一次一個小發現，答錯也沒關係。</p>
+    <div id="quiz-workspace">
+      <div class="quiz-progress-label"><span id="question-index"></span><span>每題只計第一次作答</span></div>
+      <div class="quiz-steps" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <form id="answer-form" class="quiz-card">
+        <fieldset id="answer-fields"><legend id="question-prompt"></legend><p id="question-sentence" lang="en"></p><div id="answer-controls"></div></fieldset>
+        <p id="quiz-error" class="form-error" role="alert" hidden></p>
+        <div id="answer-feedback" class="answer-feedback" role="status" aria-live="polite" hidden><h2 id="feedback-title"></h2><p id="feedback-answer" lang="en"></p><p id="feedback-explanation"></p></div>
+        <div class="quiz-actions"><button id="check-answer" class="button button-primary" type="submit">檢查答案</button><button id="next-question" class="button button-primary" type="button" hidden>下一題 {{ icon('arrow') }}</button></div>
+      </form>
+      <p class="quiz-footnote">完成五題才會儲存紀錄。離開或重新整理會結束這一回合。</p>
+    </div>
+    <section id="quiz-results" class="quiz-results" aria-labelledby="results-title" hidden>
+      <div class="result-celebration" aria-hidden="true">{{ icon('check') }}</div><p class="lesson-kicker">ONE ROUND, ONE STEP FORWARD</p><h2 id="results-title" tabindex="-1">五題完成，觀念更清楚。</h2>
+      <div class="result-stats"><div><strong id="result-score"></strong><span>首次作答</span></div><div><strong id="result-accuracy"></strong><span>正確率</span></div><div><strong id="result-xp"></strong><span>本次經驗值</span></div></div>
+      <p id="save-status" class="storage-note" role="status"></p><button id="retry-save" class="text-button" type="button" hidden>再試儲存</button>
+      <div class="actions"><button id="practice-again" class="button button-primary" type="button">再練習一次 {{ icon('arrow') }}</button><a class="button button-secondary" href="/">返回首頁</a></div>
+      <section id="missed-review" class="missed-review" aria-labelledby="review-title"><h3 id="review-title">把這幾題，再看懂一次。</h3><div id="missed-items"></div></section>
+    </section>
+  </section>
+  <p id="round-error" class="form-error" role="alert" hidden></p>
+</div>
+{% endblock %}
+{% block extra %}<script src="{{ url_for('static', path='practice.js') }}?v=5" defer></script>{% endblock %}
